@@ -1,135 +1,390 @@
 // src/pages/SweetsList.jsx
 
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+
+import {
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
+
 import { useAuth } from "../context/AuthContext";
+import { useToast } from "../context/ToastContext";
+
 import { getAllSweets } from "../services/sweetService";
+
 import SweetCard from "../components/SweetCard";
 
+import {
+  SweetCardSkeleton,
+  SearchBarSkeleton,
+  PageHeaderSkeleton,
+} from "../components/ui/Skeleton";
+
+import CategoryFilter from "../components/CategoryFilter";
+
+import { useDark } from "../hooks/useDark";
+
 const SweetsList = () => {
+
   const { user } = useAuth();
+
+  const { warning } = useToast();
+
   const navigate = useNavigate();
 
+  const location = useLocation();
+
+  const dark = useDark();
+
   const [sweets, setSweets] = useState([]);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
 
-  // true if current user is admin
-  const isAdmin = user?.role === "admin";
+  const [searchQuery, setSearchQuery] =
+    useState("");
 
-  // Fetch sweets — re-runs when searchQuery changes
+  const [loading, setLoading] =
+    useState(true);
+
+  const [apiError, setApiError] =
+    useState("");
+
+  const [category, setCategory] =
+    useState("");
+
+  // Admin check
+  const isAdmin =
+    user?.role === "admin";
+
+  // Access denied toast
+  useEffect(() => {
+
+    if (location.state?.accessDenied) {
+
+      warning(
+        "Admin access only",
+        "Access Denied"
+      );
+
+      // Prevent repeat toast on refresh
+      window.history.replaceState({}, "");
+
+    }
+
+  }, []);
+
+  // Fetch sweets
   const fetchSweets = useCallback(async () => {
+
     setLoading(true);
-    setError("");
+
+    setApiError("");
+
     try {
-      const data = await getAllSweets(searchQuery);
-      // Handle both { sweets: [...] } and plain array responses
-      setSweets(Array.isArray(data) ? data : data.sweets || []);
+
+      const data =
+        await getAllSweets(searchQuery);
+
+      setSweets(
+        Array.isArray(data)
+          ? data
+          : data.sweets || []
+      );
+
     } catch (err) {
-      setError("Failed to load sweets. Please try again.");
+
+      setApiError(
+        "Failed to load sweets. Please try again."
+      );
+
     } finally {
+
       setLoading(false);
     }
+
   }, [searchQuery]);
 
-  // Run on first load and whenever searchQuery changes
+  // Initial + search fetch
   useEffect(() => {
-    // Debounce: wait 400ms after user stops typing before searching
+
     const timer = setTimeout(() => {
       fetchSweets();
     }, 400);
-    return () => clearTimeout(timer); // cleanup on re-render
+
+    return () => clearTimeout(timer);
+
   }, [fetchSweets]);
 
-  // Called by SweetCard after deletion — removes card from UI instantly
+  // Remove deleted sweet instantly
   const handleDelete = (deletedId) => {
-    setSweets((prev) => prev.filter((s) => s.id !== deletedId));
+
+    setSweets((prev) =>
+      prev.filter(
+        (s) => s.id !== deletedId
+      )
+    );
   };
 
+  // Client-side category filtering
+  const visible = category
+    ? sweets.filter(
+        (s) =>
+          s.category?.toLowerCase() ===
+          category.toLowerCase()
+      )
+    : sweets;
+
   return (
-    <div style={styles.page}>
-      {/* Page Header */}
-      <div style={styles.header}>
-        <div>
-          <h1 style={styles.title}>🍬 Our Sweets</h1>
-          <p style={styles.subtitle}>
-            {sweets.length} item{sweets.length !== 1 ? "s" : ""} available
-          </p>
-        </div>
+    <div
+      className="page-container"
+      style={{
+        ...styles.page,
 
-        {/* Admin-only: Add Sweet button */}
-        {isAdmin && (
-          <button
-            onClick={() => navigate("/sweets/add")}
-            style={styles.addBtn}
-          >
-            + Add Sweet
-          </button>
-        )}
-      </div>
+        backgroundColor: dark
+          ? "#0c0a09"
+          : "#fafaf9",
+      }}
+    >
 
-      {/* Search Bar */}
-      <div style={styles.searchWrapper}>
-        <span style={styles.searchIcon}>🔍</span>
-        <input
-          type="text"
-          placeholder="Search sweets by name, category..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          style={styles.searchInput}
-        />
-        {searchQuery && (
-          <button
-            onClick={() => setSearchQuery("")}
-            style={styles.clearBtn}
-          >
-            ✕
-          </button>
-        )}
-      </div>
-
-      {/* States: Loading / Error / Empty / Grid */}
+      {/* Header */}
       {loading ? (
-        <div style={styles.centerMessage}>
-          <div style={styles.spinner} />
-          <p style={{ color: "#8b6347", marginTop: "16px" }}>Loading sweets...</p>
-        </div>
-      ) : error ? (
-        <div style={styles.errorBox}>
-          <p>{error}</p>
-          <button onClick={fetchSweets} style={styles.retryBtn}>
-            Retry
-          </button>
-        </div>
-      ) : sweets.length === 0 ? (
-        <div style={styles.centerMessage}>
-          <span style={{ fontSize: "3rem" }}>🫙</span>
-          <p style={{ color: "#8b6347", marginTop: "12px" }}>
-            {searchQuery
-              ? `No sweets found for "${searchQuery}"`
-              : "No sweets added yet."}
-          </p>
-          {isAdmin && !searchQuery && (
-            <button
-              onClick={() => navigate("/sweets/add")}
-              style={{ ...styles.addBtn, marginTop: "16px" }}
+
+        <PageHeaderSkeleton />
+
+      ) : (
+
+        <div
+          className="stack-mobile"
+          style={styles.header}
+        >
+
+          <div>
+
+            <h1
+              style={{
+                ...styles.title,
+
+                color: dark
+                  ? "#e7e5e4"
+                  : "#1c1917",
+              }}
             >
-              + Add First Sweet
+              🍬 Our Sweets
+            </h1>
+
+            <p
+              style={{
+                ...styles.subtitle,
+
+                color: dark
+                  ? "#a8a29e"
+                  : "#78716c",
+              }}
+            >
+
+              {visible.length} item
+              {visible.length !== 1
+                ? "s"
+                : ""}
+              {" "}available
+
+              {category && (
+                <span
+                  style={styles.categoryLabel}
+                >
+                  in {category}
+                </span>
+              )}
+
+            </p>
+
+          </div>
+
+          {isAdmin && (
+            <button
+              onClick={() =>
+                navigate("/sweets/add")
+              }
+              style={styles.addBtn}
+            >
+              + Add Sweet
             </button>
           )}
+
         </div>
+      )}
+
+      {/* Search */}
+      {loading ? (
+
+        <SearchBarSkeleton />
+
       ) : (
-        <div style={styles.grid}>
-          {sweets.map((sweet) => (
+
+        <div
+          className="full-mobile"
+          style={{
+            ...styles.searchWrapper,
+
+            backgroundColor: dark
+              ? "#1c1917"
+              : "#ffffff",
+
+            border: `1.5px solid ${
+              dark
+                ? "#44403c"
+                : "#e0c8a8"
+            }`,
+          }}
+        >
+
+          <span style={styles.searchIcon}>
+            🔍
+          </span>
+
+          <input
+            type="text"
+
+            placeholder="Search sweets by name, category..."
+
+            value={searchQuery}
+
+            onChange={(e) =>
+              setSearchQuery(
+                e.target.value
+              )
+            }
+
+            className="search-input"
+
+            style={{
+              ...styles.searchInput,
+
+              color: dark
+                ? "#e7e5e4"
+                : "#1c1917",
+            }}
+          />
+
+          {searchQuery && (
+            <button
+              onClick={() =>
+                setSearchQuery("")
+              }
+              style={styles.clearBtn}
+            >
+              ✕
+            </button>
+          )}
+
+        </div>
+      )}
+
+      {/* Category Filter */}
+      {!loading && (
+        <CategoryFilter
+          selected={category}
+          onSelect={setCategory}
+        />
+      )}
+
+      {/* Loading */}
+      {loading ? (
+
+        <div className="sweets-grid">
+          {Array.from({ length: 8 }).map(
+            (_, i) => (
+              <SweetCardSkeleton
+                key={i}
+              />
+            )
+          )}
+        </div>
+
+      ) : apiError ? (
+
+        <div style={styles.errorBox}>
+
+          <p>{apiError}</p>
+
+          <button
+            onClick={fetchSweets}
+            style={styles.retryBtn}
+          >
+            Retry
+          </button>
+
+        </div>
+
+      ) : visible.length === 0 ? (
+
+        <div style={styles.centerMessage}>
+
+          <span
+            style={{ fontSize: "3rem" }}
+          >
+            🫙
+          </span>
+
+          <p style={styles.emptyText}>
+
+            {searchQuery
+              ? `No results for "${searchQuery}"`
+              : category
+              ? `No sweets in "${category}"`
+              : "No sweets available yet"}
+
+          </p>
+
+          {(searchQuery || category) && (
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setCategory("");
+              }}
+              style={
+                styles.clearFiltersBtn
+              }
+            >
+              Clear filters
+            </button>
+          )}
+
+          {isAdmin &&
+            !searchQuery &&
+            !category && (
+              <button
+                onClick={() =>
+                  navigate("/sweets/add")
+                }
+                style={{
+                  ...styles.addBtn,
+                  marginTop: "16px",
+                }}
+              >
+                + Add First Sweet
+              </button>
+            )}
+
+        </div>
+
+      ) : (
+
+        <div className="sweets-grid">
+
+          {visible.map((sweet) => (
             <SweetCard
               key={sweet.id}
               sweet={sweet}
               onDelete={handleDelete}
             />
           ))}
+
         </div>
       )}
+
     </div>
   );
 };
@@ -140,8 +395,9 @@ const styles = {
     margin: "0 auto",
     padding: "32px 20px",
     minHeight: "calc(100vh - 64px)",
-    backgroundColor: "#fdf6ec",
+    backgroundColor: "#fafaf9",
   },
+
   header: {
     display: "flex",
     justifyContent: "space-between",
@@ -150,13 +406,27 @@ const styles = {
     flexWrap: "wrap",
     gap: "12px",
   },
+
   title: {
     fontSize: "2rem",
     fontWeight: "800",
-    color: "#3b1f0a",
+    color: "#1c1917",
     margin: "0 0 4px",
   },
-  subtitle: { color: "#8b6347", margin: 0, fontSize: "0.9rem" },
+
+  subtitle: {
+    color: "#78716c",
+    margin: 0,
+    fontSize: "0.9rem",
+  },
+
+  categoryLabel: {
+    marginLeft: "8px",
+    fontSize: "12px",
+    color: "#c97c2e",
+    fontWeight: 600,
+  },
+
   addBtn: {
     backgroundColor: "#c97c2e",
     color: "#fff",
@@ -168,6 +438,7 @@ const styles = {
     cursor: "pointer",
     whiteSpace: "nowrap",
   },
+
   searchWrapper: {
     display: "flex",
     alignItems: "center",
@@ -175,10 +446,15 @@ const styles = {
     border: "1.5px solid #e0c8a8",
     borderRadius: "12px",
     padding: "0 16px",
-    marginBottom: "32px",
+    marginBottom: "24px",
     gap: "10px",
+    maxWidth: "520px",
   },
-  searchIcon: { fontSize: "1rem" },
+
+  searchIcon: {
+    fontSize: "1rem",
+  },
+
   searchInput: {
     flex: 1,
     padding: "13px 0",
@@ -186,8 +462,9 @@ const styles = {
     outline: "none",
     fontSize: "0.95rem",
     backgroundColor: "transparent",
-    color: "#3b1f0a",
+    color: "#1c1917",
   },
+
   clearBtn: {
     background: "none",
     border: "none",
@@ -196,29 +473,36 @@ const styles = {
     fontSize: "1rem",
     padding: "4px",
   },
-  grid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-    gap: "24px",
-  },
+
   centerMessage: {
     textAlign: "center",
     padding: "60px 20px",
   },
-  spinner: {
-    width: "40px",
-    height: "40px",
-    border: "4px solid #f0e0c8",
-    borderTop: "4px solid #c97c2e",
-    borderRadius: "50%",
-    animation: "spin 0.8s linear infinite",
-    margin: "0 auto",
+
+  emptyText: {
+    color: "#8b6347",
+    marginTop: "12px",
+    fontSize: "1rem",
   },
+
+  clearFiltersBtn: {
+    marginTop: "16px",
+    padding: "8px 20px",
+    borderRadius: "10px",
+    border: "1.5px solid #e7e5e4",
+    backgroundColor: "#ffffff",
+    color: "#57534e",
+    fontSize: "13px",
+    fontWeight: 600,
+    cursor: "pointer",
+  },
+
   errorBox: {
     textAlign: "center",
     padding: "40px",
     color: "#c0392b",
   },
+
   retryBtn: {
     backgroundColor: "#c97c2e",
     color: "#fff",
@@ -230,10 +514,5 @@ const styles = {
     marginTop: "12px",
   },
 };
-
-// Add spinner keyframe to document (runs once)
-const styleTag = document.createElement("style");
-styleTag.textContent = `@keyframes spin { to { transform: rotate(360deg); } }`;
-document.head.appendChild(styleTag);
 
 export default SweetsList;

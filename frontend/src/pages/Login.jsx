@@ -1,13 +1,16 @@
 // src/pages/Login.jsx
 
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+
 import API from "../api/axios";
 
 const Login = () => {
   const { login, isAuthenticated } = useAuth();
+  const location = useLocation();
   const navigate = useNavigate();
+
 
   // Form state
   const [formData, setFormData] = useState({ email: "", password: "" });
@@ -16,9 +19,11 @@ const Login = () => {
 
   // If user is already logged in, redirect them to dashboard
   if (isAuthenticated) {
-    navigate("/dashboard");
-    return null;
-  }
+
+  navigate("/sweets");
+
+  return null;
+}
 
   // Handle input changes
   const handleChange = (e) => {
@@ -42,7 +47,29 @@ const Login = () => {
       login(user, token);
 
       // Redirect to dashboard
-      navigate("/dashboard");
+      // Redirect safely after login
+
+const fromState =
+  location.state?.from;
+
+const fromStorage =
+  sessionStorage.getItem(
+    "redirectAfterLogin"
+  );
+
+const destination =
+  fromState ||
+  fromStorage ||
+  "/sweets";
+
+// Clear redirect storage
+sessionStorage.removeItem(
+  "redirectAfterLogin"
+);
+
+navigate(destination, {
+  replace: true,
+});
     } catch (err) {
       // Show error from backend or a fallback
       setError(err.response?.data?.message || "Login failed. Please try again.");

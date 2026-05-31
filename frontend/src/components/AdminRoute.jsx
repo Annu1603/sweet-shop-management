@@ -1,13 +1,12 @@
-// src/components/ProtectedRoute.jsx
+// src/components/AdminRoute.jsx
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
-export default function ProtectedRoute({ children }) {
-  const { isAuthenticated, loading } = useAuth();
+export default function AdminRoute({ children }) {
+  const { user, isAuthenticated, loading } = useAuth();
   const location = useLocation();
 
-  // While auth is hydrating from localStorage — show nothing
-  // This prevents a flash-redirect to /login on page refresh
+  // Wait for auth hydration
   if (loading) {
     return (
       <div style={{
@@ -23,7 +22,6 @@ export default function ProtectedRoute({ children }) {
           alignItems: "center",
           gap: "16px",
         }}>
-          {/* Spinner */}
           <div style={{
             width: "40px",
             height: "40px",
@@ -38,21 +36,15 @@ export default function ProtectedRoute({ children }) {
             color: "#78716c",
             fontWeight: 600,
           }}>
-            Loading…
+            Verifying access…
           </p>
         </div>
-
-        {/* Spinner keyframe */}
-        <style>{`
-          @keyframes spin {
-            to { transform: rotate(360deg); }
-          }
-        `}</style>
+        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
 
-  // Not authenticated — redirect to login, remember where they were
+  // Not logged in at all — send to login
   if (!isAuthenticated) {
     return (
       <Navigate
@@ -63,6 +55,11 @@ export default function ProtectedRoute({ children }) {
     );
   }
 
-  // Authenticated — render the page
+  // Logged in but not admin — send to sweets with a clear message
+  if (user?.role !== "admin") {
+    return <Navigate to="/sweets" state={{ accessDenied: true }} replace />;
+  }
+
+  // Admin confirmed — render the page
   return children;
 }

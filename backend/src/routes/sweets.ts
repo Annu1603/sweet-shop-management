@@ -10,7 +10,7 @@ import {
 const router = Router();
 
 /* ---------------- PUBLIC / AUTH ---------------- */
-router.get('/search', authMiddleware, SweetsController.search);
+router.get('/search', SweetsController.search);
 router.get('/', SweetsController.getAll);
 
 

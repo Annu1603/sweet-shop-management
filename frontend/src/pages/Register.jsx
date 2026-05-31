@@ -20,7 +20,7 @@ const Register = () => {
 
   // Redirect if already logged in
   if (isAuthenticated) {
-    navigate("/dashboard");
+    navigate("/sweets");
     return null;
   }
 
@@ -56,10 +56,18 @@ const Register = () => {
 
       // Auto-login after registration
       login(user, token);
-      navigate("/dashboard");
+      navigate("/sweets");
     } catch (err) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
-    } finally {
+
+  const backendMessage =
+    err.response?.data?.message ||
+    err.response?.data?.error;
+
+  setError(
+    backendMessage ||
+    "Registration failed. Please try again."
+  );
+}finally {
       setLoading(false);
     }
   };

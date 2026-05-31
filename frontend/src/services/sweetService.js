@@ -34,3 +34,8 @@ export const deleteSweet = async (id) => {
   const response = await API.delete(`/sweets/${id}`);
   return response.data;
 };
+
+export const restockSweet = async (id, quantity) => {
+  const response = await API.post(`/sweets/${id}/restock`, { quantity });
+  return response.data;
+};
