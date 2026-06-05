@@ -90,9 +90,7 @@ function AppContent() {
                     <Route
                       path="/sweets"
                       element={
-                        <ProtectedRoute>
                           <SweetsList />
-                        </ProtectedRoute>
                       }
                     />
 
