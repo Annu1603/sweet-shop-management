@@ -7,7 +7,9 @@ export const getAllSweets = async (searchQuery = "") => {
   const endpoint = searchQuery
     ? `/sweets/search?q=${encodeURIComponent(searchQuery)}`
     : "/sweets";
+
   const response = await API.get(endpoint);
+
   return response.data;
 };
 

@@ -41,11 +41,22 @@ const Login = () => {
       // POST to your backend login endpoint
       const response = await API.post("/auth/login", formData);
 
-      const { token, user } = response.data;
+console.log("LOGIN RESPONSE:", response.data);
 
-      // Save to context + localStorage
-      login(user, token);
+      const { token } = response.data;
 
+// Decode JWT payload safely
+const payload = JSON.parse(
+  atob(token.split(".")[1])
+);
+
+// Build frontend user object
+const user = {
+  id: payload.userId,
+  is_admin: payload.isAdmin,
+};
+
+login(user, token);
       // Redirect to dashboard
       // Redirect safely after login
 
@@ -70,7 +81,7 @@ sessionStorage.removeItem(
 navigate(destination, {
   replace: true,
 });
-    } catch (err) {
+   } catch (err) {
       // Show error from backend or a fallback
       setError(err.response?.data?.message || "Login failed. Please try again.");
     } finally {

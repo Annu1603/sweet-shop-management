@@ -12,6 +12,20 @@ import { getErrorMessage } from "../api/axios";
 
 import QuantityControl from "../components/QuantityControl";
 
+const getEmoji = (text = "") => {
+  const value = text.toLowerCase();
+
+  if (value.includes("chocolate")) return "🍫";
+  if (value.includes("cake")) return "🍰";
+  if (value.includes("cookie")) return "🍪";
+  if (value.includes("ice")) return "🍦";
+  if (value.includes("candy")) return "🍬";
+  if (value.includes("bengali")) return "🌸";
+  if (value.includes("premium")) return "👑";
+
+  return "🍭";
+};
+
 const Cart = () => {
 
   const navigate = useNavigate();
@@ -441,6 +455,190 @@ const Cart = () => {
       )}
     </div>
   );
+};
+
+const styles = {
+  page: {
+    maxWidth: "1200px",
+    margin: "0 auto",
+    padding: "32px 20px",
+    minHeight: "calc(100vh - 64px)",
+  },
+
+  pageHeader: {
+    marginBottom: "24px",
+  },
+
+  backBtn: {
+  backgroundColor: "#ffffff",
+  border: "1px solid #e7e5e4",
+  borderRadius: "10px",
+  padding: "10px 16px",
+  cursor: "pointer",
+  fontWeight: 600,
+  color: "#3b1f0a",
+},
+
+  title: {
+    margin: 0,
+    fontSize: "2rem",
+    fontWeight: 800,
+  },
+
+  emptyState: {
+    textAlign: "center",
+    padding: "80px 20px",
+  },
+
+  emptyTitle: {
+    marginTop: "16px",
+    marginBottom: "8px",
+    fontSize: "1.8rem",
+    fontWeight: 700,
+  },
+
+  emptySubtitle: {
+    marginBottom: "24px",
+  },
+
+  shopBtn: {
+    backgroundColor: "#c97c2e",
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "12px 20px",
+    cursor: "pointer",
+    fontWeight: 700,
+  },
+
+  itemsPanel: {
+    borderRadius: "16px",
+    overflow: "hidden",
+  },
+
+  panelHeader: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    padding: "20px",
+  },
+
+  panelTitle: {
+    margin: 0,
+    fontSize: "1.2rem",
+    fontWeight: 700,
+  },
+
+  clearAllBtn: {
+    background: "none",
+    border: "none",
+    color: "#dc2626",
+    cursor: "pointer",
+    fontWeight: 600,
+  },
+
+  cartRow: {
+    display: "flex",
+    gap: "16px",
+    padding: "18px 20px",
+    alignItems: "center",
+  },
+
+  rowEmoji: {
+    width: "56px",
+    height: "56px",
+    borderRadius: "12px",
+    backgroundColor: "#fdf0d8",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: "1.8rem",
+    flexShrink: 0,
+  },
+
+  rowInfo: {
+    flex: 1,
+    display: "flex",
+    flexDirection: "column",
+    gap: "4px",
+  },
+
+  rowName: {
+    fontWeight: 700,
+    fontSize: "1rem",
+  },
+
+  rowCategory: {
+    color: "#c97c2e",
+    fontSize: "13px",
+    fontWeight: 600,
+  },
+
+  rowUnitPrice: {
+    fontSize: "13px",
+  },
+
+  lowStockNote: {
+    color: "#dc2626",
+    fontSize: "12px",
+    fontWeight: 600,
+  },
+
+  rowRight: {
+    display: "flex",
+    alignItems: "center",
+    gap: "12px",
+  },
+
+  rowTotal: {
+    minWidth: "90px",
+    textAlign: "right",
+    fontWeight: 700,
+  },
+
+  removeBtn: {
+    background: "none",
+    border: "none",
+    color: "#dc2626",
+    cursor: "pointer",
+    fontSize: "16px",
+  },
+
+  summaryPanel: {
+    backgroundColor: "#3b1f0a",
+    color: "#ffffff",
+    borderRadius: "16px",
+    padding: "24px",
+    position: "sticky",
+    top: "90px",
+  },
+
+  summaryTitle: {
+    marginTop: 0,
+    marginBottom: "20px",
+    fontSize: "1.2rem",
+    fontWeight: 700,
+  },
+
+  errorBox: {
+    backgroundColor: "#7f1d1d",
+    color: "#ffffff",
+    padding: "10px",
+    borderRadius: "8px",
+    marginBottom: "12px",
+  },
+
+  placeOrderBtn: {
+    width: "100%",
+    backgroundColor: "#c97c2e",
+    color: "#ffffff",
+    border: "none",
+    borderRadius: "10px",
+    padding: "14px",
+    cursor: "pointer",
+    fontWeight: 700,
+    fontSize: "15px",
+  },
 };
 
 export default Cart;

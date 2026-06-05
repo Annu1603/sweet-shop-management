@@ -52,10 +52,20 @@ const Register = () => {
         password: formData.password,
       });
 
-      const { token, user } = response.data;
+      const { token } = response.data;
 
-      // Auto-login after registration
-      login(user, token);
+// Decode JWT payload
+const payload = JSON.parse(
+  atob(token.split(".")[1])
+);
+
+// Build frontend user object
+const user = {
+  id: payload.userId,
+  is_admin: payload.isAdmin,
+};
+
+login(user, token);
       navigate("/sweets");
     } catch (err) {
 
