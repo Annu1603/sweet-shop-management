@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://sweet-shop-management-production-7ffd.up.railway.app/api",
+  baseURL: "https://sweet-shop-management-production-c8ae.up.railway.app/api",
   timeout: 10000, // 10 second timeout
 });
 
