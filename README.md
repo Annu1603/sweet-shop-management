@@ -1,81 +1,110 @@
 # 🍬 Sweet Shop Management System
 
-A full-stack MERN application for managing sweet inventory, purchases, sales, and stock tracking.
+A modern full-stack inventory management application designed for sweet shops to manage products, purchases, and sales efficiently.
 
 ## 🚀 Live Demo
 
 Frontend:
-https://YOUR-VERCEL-LINK
+https://sweet-shop-management-pi.vercel.app
 
 Backend API:
-https://YOUR-RAILWAY-LINK
+https://sweet-shop-management-production-c8ae.up.railway.app
 
-## 📸 Screenshots
+---
+
+## 📸 Application Screenshots
+
+### Login Page
+
+<img width="1920" height="1042" alt="login-page png" src="https://github.com/user-attachments/assets/9deb812e-a734-45a0-924d-86b768904c2a" />
 
 ### Dashboard
 
-![Dashboard](screenshots/dashboard.png)
+<img width="1920" height="1080" alt="home-page png" src="https://github.com/user-attachments/assets/02abd79f-9975-4141-9d85-6b1f4cf16bdc" />
 
-### Inventory
+### Inventory Management
 
-![Inventory](screenshots/inventory.png)
+<img width="1920" height="1042" alt="cart-page png" src="https://github.com/user-attachments/assets/49d50244-7681-45ed-a3ec-f8bcf7e3fab9" />
 
-### Add Sweet
-
-![Add Sweet](screenshots/add-sweet.png)
+---
 
 ## ✨ Features
 
-- User Authentication
-- JWT Authorization
-- Role Based Access Control
-- Sweet Inventory Management
-- Purchase Tracking
-- Sales Tracking
-- REST APIs
-- Responsive UI
+* User Authentication
+* JWT Authorization
+* Role-Based Access
+* Sweet Inventory Management
+* Purchase Management
+* Sales Tracking
+* PostgreSQL Database
+* RESTful APIs
+* Responsive Design
+
+---
 
 ## 🛠️ Tech Stack
 
 ### Frontend
-- React.js
-- TypeScript
-- Tailwind CSS
+
+* React.js
+* TypeScript
+* CSS
 
 ### Backend
-- Node.js
-- Express.js
-- PostgreSQL
+
+* Node.js
+* Express.js
+* PostgreSQL
 
 ### Deployment
-- Vercel
-- Railway
+
+* Vercel
+* Railway
+
+---
 
 ## 📂 Project Structure
 
-frontend/
-backend/
+sweet-shop-management/
+
+├── frontend/
+
+├── backend/
+
+├── screenshots/
+
+└── README.md
+
+---
 
 ## ⚙️ Installation
 
 ### Clone Repository
 
-git clone YOUR_REPO_LINK
+git clone YOUR_REPOSITORY_URL
 
-### Backend
+### Backend Setup
 
 cd backend
+
 npm install
+
 npm run dev
 
-### Frontend
+### Frontend Setup
 
 cd frontend
+
 npm install
+
 npm run dev
+
+---
 
 ## 👨‍💻 Author
 
-Annu Chauhan<img width="1920" height="1080" alt="home-page png" src="https://github.com/user-attachments/assets/02abd79f-9975-4141-9d85-6b1f4cf16bdc" />
-<img width="1920" height="1042" alt="login-page png" src="https://github.com/user-attachments/assets/9deb812e-a734-45a0-924d-86b768904c2a" />
-<img width="1920" height="1042" alt="cart-page png" src="https://github.com/user-attachments/assets/49d50244-7681-45ed-a3ec-f8bcf7e3fab9" />
+Annu Chauhan
+
+GitHub: https://github.com/Annu1603
+
+LinkedIn: www.linkedin.com/in/annu-chauhan-451357275
